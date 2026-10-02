@@ -28,7 +28,7 @@ export default function Home() {
 
     try {
       const risposta = await fetch(
-        `https://api.open-meteo.com/v1/forecast?latitude=${coordinate.lat}&longitude=${coordinate.lon}&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min&timezone=Europe%2FRome`
+  `https://api.open-meteo.com/v1/forecast?latitude=${coordinate.lat}&longitude=${coordinate.lon}&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=Europe%2FRome`
       );
       const dati = await risposta.json();
 
@@ -39,6 +39,12 @@ descrizioneCondizioni: traduciCodiceMeteo(dati.current.weather_code).testo,
 emoji: traduciCodiceMeteo(dati.current.weather_code).emoji,
   temperaturaMin: dati.daily.temperature_2m_min[0],
   temperaturaMax: dati.daily.temperature_2m_max[0],
+previsioni: dati.daily.time.map((data: string, index: number) => ({
+data: data,
+min: dati.daily.temperature_2m_min[index],
+max: dati.daily.temperature_2m_min[index],
+emoji: traduciCodiceMeteo(dati.daily.weather_code[index]).emoji,
+})),
 });
     } catch (err) {
       setErrore(true);
@@ -69,10 +75,21 @@ emoji: traduciCodiceMeteo(dati.current.weather_code).emoji,
 
 {meteo && (
   <div className="border-2 border-[var(--foreground)] p-4 rounded-lg">
-   <h2 className="text-xl font-bold">{meteo.emoji} {meteo.nomeCitta}</h2>
-<p className="text-4xl my-2">{meteo.temperaturaAttuale}°C</p>
-<p className="mb-2">{meteo.descrizioneCondizioni}</p>
-<p>Min {meteo.temperaturaMin}°C · Max {meteo.temperaturaMax}°C</p>
+    <h2 className="text-xl font-bold">{meteo.emoji} {meteo.nomeCitta}</h2>
+    <p className="text-4xl my-2">{meteo.temperaturaAttuale}°C</p>
+    <p className="mb-2">{meteo.descrizioneCondizioni}</p>
+    <p>Min {meteo.temperaturaMin}°C · Max {meteo.temperaturaMax}°C</p>
+
+    <div className="flex gap-2 mt-4 overflow-x-auto">
+      {meteo.previsioni.map((giorno) => (
+        <div key={giorno.data} className="flex-shrink-0 text-center border border-[var(--foreground)] rounded-lg p-2 w-20">
+          <p className="text-xs">{giorno.data.slice(5)}</p>
+          <p className="text-2xl">{giorno.emoji}</p>
+          <p className="text-sm">{giorno.max}°</p>
+          <p className="text-xs text-gray-500">{giorno.min}°</p>
+        </div>
+      ))}
+    </div>
   </div>
 )}
 
