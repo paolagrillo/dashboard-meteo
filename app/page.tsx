@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Weather } from "./types/weather";
 import { cittaNote } from "./data/cittaNote";
 import { traduciCodiceMeteo } from "./data/codiciMeteo";
+import { useCittaPreferite } from "./context/CittaContext";
 
 
 export default function Home() {
@@ -11,6 +12,7 @@ export default function Home() {
   const [meteo, setMeteo] = useState<Weather | null>(null)
   const [loading, setLoading] = useState(false);
   const [errore, setErrore] = useState(false);
+  const { preferite, aggiungiPreferita } = useCittaPreferite();
 
   async function cercaMeteo() {
     setLoading(true);
@@ -42,7 +44,7 @@ emoji: traduciCodiceMeteo(dati.current.weather_code).emoji,
 previsioni: dati.daily.time.map((data: string, index: number) => ({
 data: data,
 min: dati.daily.temperature_2m_min[index],
-max: dati.daily.temperature_2m_min[index],
+max: dati.daily.temperature_2m_max[index],
 emoji: traduciCodiceMeteo(dati.daily.weather_code[index]).emoji,
 })),
 });
@@ -58,8 +60,23 @@ emoji: traduciCodiceMeteo(dati.daily.weather_code[index]).emoji,
 <main className="p-8 max-w-md mx-auto">
   <h1 className="text-2xl font-bold mb-4">Meteo</h1>
 
-<div className="flex gap-2 mb-2">
-  <input type="text"
+  {preferite.length > 0 && (
+    <div className="flex gap-2 mb-4 flex-wrap">
+      {preferite.map((nomeCitta) => (
+        <button
+          key={nomeCitta}
+          onClick={() => setCitta(nomeCitta)}
+          className="text-sm bg-white text-black px-3 py-1 rounded-full"
+        >
+          {nomeCitta}
+        </button>
+      ))}
+    </div>
+  )}
+
+  <div className="flex gap-2 mb-2">
+    <input type="text"
+  
   value={citta} 
   onChange={(e) => setCitta(e.target.value)}
   placeholder="Milano, Roma, Napoli..."
@@ -76,6 +93,11 @@ emoji: traduciCodiceMeteo(dati.daily.weather_code[index]).emoji,
 {meteo && (
   <div className="border-2 border-[var(--foreground)] p-4 rounded-lg">
     <h2 className="text-xl font-bold">{meteo.emoji} {meteo.nomeCitta}</h2>
+    
+<button onClick={() => aggiungiPreferita(meteo.nomeCitta)}
+className="text-sm text-[var(--primary)] underline mb-2" >
+ ☆ Salva nei preferiti
+</button>
     <p className="text-4xl my-2">{meteo.temperaturaAttuale}°C</p>
     <p className="mb-2">{meteo.descrizioneCondizioni}</p>
     <p>Min {meteo.temperaturaMin}°C · Max {meteo.temperaturaMax}°C</p>
@@ -87,8 +109,12 @@ emoji: traduciCodiceMeteo(dati.daily.weather_code[index]).emoji,
           <p className="text-2xl">{giorno.emoji}</p>
           <p className="text-sm">{giorno.max}°</p>
           <p className="text-xs text-gray-500">{giorno.min}°</p>
+
+
         </div>
       ))}
+
+
     </div>
   </div>
 )}
@@ -130,9 +156,7 @@ dashboard-meteo/
 
 
 
-// OBIETTIVI DASHBOARD METEO
-// - Previsioni a 3-5 giorni, non solo oggi
-// - Icona/emoji diversa in base al meteo (sole, pioggia, nuvoloso...)
+// OBIETTIVI DASHBOARD METEO (da fare)
 // - Termometro visivo con i gradi attuali
 // - Animazioni (nuvole, pioggia, transizioni)
 // - Grafico temperature (libreria tipo Recharts) - più avanti
