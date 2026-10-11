@@ -66,15 +66,14 @@ emoji: traduciCodiceMeteo(dati.daily.weather_code[index]).emoji,
         <button
           key={nomeCitta}
           onClick={() => setCitta(nomeCitta)}
-          className="text-sm bg-white text-black px-3 py-1 rounded-full"
-        >
+          className="text-sm bg-[var(--background)] text-[var(--foreground)] px-3 py-1 rounded-full transition delay-150 duration-300 ease-in-out hover:bg-[var(--secondary)] hover:text-[var(--foreground)] hover:scale-125">
           {nomeCitta}
         </button>
       ))}
     </div>
   )}
 
-  <div className="flex gap-2 mb-2">
+  <div className="flex gap-2 mb-2 pb-2">
     <input type="text"
   
   value={citta} 
@@ -84,31 +83,31 @@ emoji: traduciCodiceMeteo(dati.daily.weather_code[index]).emoji,
   />
   <button 
   onClick={cercaMeteo}
-  className="bg-[var(--primary)] text-white px-4 py-2 rounded-lg">Cerca</button>
+   className="text-l my-2 bg-[var(--background)] text-[var(--foreground)] px-3 py-1 rounded-full transition delay-150 duration-300 ease-in-out hover:bg-[var(--secondary)] hover:text-[var(--foreground)] hover:scale-110">Cerca</button>
 </div>
 
 {loading && <p>Caricamento...</p>}
 {errore && <p className="text-red-600">Città non trovata. Riprova</p>}
 
 {meteo && (
-  <div className="border-2 border-[var(--foreground)] p-4 rounded-lg">
-    <h2 className="text-xl font-bold">{meteo.emoji} {meteo.nomeCitta}</h2>
+  <div className="border-2 border-[var(--foreground)] p-4 rounded-lg fade-in py-3 pt-3">
+    <h2 className="text-xl font-bold ">{meteo.emoji} {meteo.nomeCitta}</h2>
     
 <button onClick={() => aggiungiPreferita(meteo.nomeCitta)}
-className="text-sm text-[var(--primary)] underline mb-2" >
+ className="text-sm my-2 bg-[var(--background)] text-[var(--foreground)] px-3 py-1 rounded-full transition delay-150 duration-300 ease-in-out hover:bg-[var(--secondary)] hover:text-[var(--foreground)] hover:scale-110">
  ☆ Salva nei preferiti
 </button>
     <p className="text-4xl my-2">{meteo.temperaturaAttuale}°C</p>
     <p className="mb-2">{meteo.descrizioneCondizioni}</p>
     <p>Min {meteo.temperaturaMin}°C · Max {meteo.temperaturaMax}°C</p>
 
-    <div className="flex gap-2 mt-4 overflow-x-auto">
+    <div className="flex gap-2 mt-4 overflow-x-auto pb-4 ">
       {meteo.previsioni.map((giorno) => (
-        <div key={giorno.data} className="flex-shrink-0 text-center border border-[var(--foreground)] rounded-lg p-2 w-20">
+        <div key={giorno.data} className="flex-shrink-0 text-center border border-[var(--foreground)] rounded-lg p-2 w-20  bg-[var(--foreground)] text-[var(--background)]  hover:bg-[var(--secondary)] hover:bg-[var(--secondary)] hover:text-[var(--foreground)]">
           <p className="text-xs">{giorno.data.slice(5)}</p>
           <p className="text-2xl">{giorno.emoji}</p>
           <p className="text-sm">{giorno.max}°</p>
-          <p className="text-xs text-gray-500">{giorno.min}°</p>
+          <p className="text-xs">{giorno.min}°</p>
 
 
         </div>
